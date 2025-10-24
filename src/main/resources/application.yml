@@ -1,0 +1,19 @@
+spring:
+  application:
+    name=TaskHub
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskhub
+    username: thuser
+    password: thuser
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+app:
+  jwt:
+    secret: R2POV7LI8i1c3KG9uWFSAIfLEk2WFISuPXVipmfL534
+    expiration-ms: 86400000
