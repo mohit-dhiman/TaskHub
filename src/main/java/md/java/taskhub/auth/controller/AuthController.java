@@ -1,8 +1,8 @@
 package md.java.taskhub.auth.controller;
 
-import md.java.taskhub.auth.dto.AuthResponse;
-import md.java.taskhub.auth.dto.LoginRequest;
-import md.java.taskhub.auth.dto.RegisterRequest;
+import md.java.taskhub.auth.dto.AuthResponseDto;
+import md.java.taskhub.auth.dto.LoginRequestDto;
+import md.java.taskhub.auth.dto.RegisterRequestDto;
 import md.java.taskhub.auth.dto.UserProfileDto;
 import md.java.taskhub.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +20,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Validated @RequestBody RegisterRequest request) {
-        AuthResponse authResponse = authService.register(request);
+    public ResponseEntity<AuthResponseDto> register(@Validated @RequestBody RegisterRequestDto request) {
+        AuthResponseDto authResponse = authService.register(request);
         return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Validated @RequestBody LoginRequest request) {
-        AuthResponse authResponse = authService.login(request);
+    public ResponseEntity<AuthResponseDto> login(@Validated @RequestBody LoginRequestDto request) {
+        AuthResponseDto authResponse = authService.login(request);
         return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileDto> getProfile(@RequestParam String username) {
-        UserProfileDto userProfileDto = authService.getProfile(username);
+    public ResponseEntity<UserProfileDto> getProfile() {
+        UserProfileDto userProfileDto = authService.getMyProfile();
         return ResponseEntity.ok(userProfileDto);
     }
 }

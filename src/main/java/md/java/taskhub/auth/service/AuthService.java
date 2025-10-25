@@ -1,13 +1,16 @@
 package md.java.taskhub.auth.service;
 
-import md.java.taskhub.auth.dto.AuthResponse;
-import md.java.taskhub.auth.dto.LoginRequest;
-import md.java.taskhub.auth.dto.RegisterRequest;
+import jakarta.persistence.EntityNotFoundException;
+import md.java.taskhub.auth.dto.AuthResponseDto;
+import md.java.taskhub.auth.dto.LoginRequestDto;
+import md.java.taskhub.auth.dto.RegisterRequestDto;
 import md.java.taskhub.auth.dto.UserProfileDto;
 import md.java.taskhub.auth.entity.User;
 import md.java.taskhub.auth.entity.UserRole;
 import md.java.taskhub.auth.repository.UserRepository;
 import md.java.taskhub.auth.util.JwtService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +29,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponseDto register(RegisterRequestDto request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -43,22 +46,31 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtService.generateToken(user.getUsername());
-        return new AuthResponse(token, user.getUsername());
+        return new AuthResponseDto(token, user.getUsername());
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponseDto login(LoginRequestDto request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid username or password");
         }
         String token = jwtService.generateToken(user.getUsername());
-        return new AuthResponse(token, user.getUsername());
+        return new AuthResponseDto(token, user.getUsername());
     }
 
-    public UserProfileDto getProfile(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public UserProfileDto getMyProfile() {
+        User user = getCurrentUser();
         return new UserProfileDto(user.getId(), user.getUsername(), user.getEmail());
+    }
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principalUser = (User) authentication.getPrincipal();
+        String username = principalUser.getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException("User not found with username: " + username)
+        );
+        return user;
     }
 }

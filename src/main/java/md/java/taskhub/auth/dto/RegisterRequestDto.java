@@ -9,7 +9,7 @@ import md.java.taskhub.auth.entity.UserRole;
 
 @Getter
 @Setter
-public class RegisterRequest {
+public class RegisterRequestDto {
     @NotBlank(message = "Username is required")
     private String username;
 

@@ -1,13 +1,18 @@
 package md.java.taskhub.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import md.java.taskhub.common.exception.ApiError;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * This class handles unauthorized access.
@@ -21,11 +26,31 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    private final ObjectMapper objectMapper;
+
+    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
+        objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper = objectMapper;
+
+    }
+
+
     @Override
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+
+        ApiError apiError = new ApiError();
+        apiError.setTimestamp(LocalDateTime.now());
+        apiError.setStatus(HttpStatus.UNAUTHORIZED.value());
+        apiError.setError("Unauthorized");
+        apiError.setMessage(authException.getMessage());
+
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
+        response.getWriter().write(objectMapper.writeValueAsString(apiError));
+        response.getWriter().flush();
     }
 }
