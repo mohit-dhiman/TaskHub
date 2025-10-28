@@ -29,7 +29,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
 
     public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        objectMapper.registerModule(new JavaTimeModule());
         this.objectMapper = objectMapper;
 
     }
