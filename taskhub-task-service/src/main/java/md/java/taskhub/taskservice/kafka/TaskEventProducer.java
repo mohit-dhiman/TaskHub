@@ -1,6 +1,6 @@
 package md.java.taskhub.taskservice.kafka;
 
-import md.java.taskhub.taskservice.event.TaskEvent;
+import md.java.taskhub.common.events.TaskEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package md.java.taskhub.taskservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import md.java.taskhub.taskservice.entity.TaskStatus;
+import md.java.taskhub.common.enums.TaskStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

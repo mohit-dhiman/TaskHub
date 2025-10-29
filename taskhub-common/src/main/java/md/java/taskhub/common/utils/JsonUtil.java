@@ -14,6 +14,7 @@ public class JsonUtil {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
+    // NOTE: Creating the ObjectMapper so that the Java 8 Time library get properly converted to Json
     public static ObjectMapper objectMapperWithTimeModuleSupport() {
         return objectMapper;
     }

@@ -1,6 +1,9 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name=TaskHub
+    name: taskhub-auth-service
   datasource:
     url: jdbc:postgresql://localhost:5432/taskhub
     username: thuser
@@ -19,6 +22,10 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
 
+logging:
+  level:
+    root: info
+
 app:
   jwt:
     secret: R2POV7LI8i1c3KG9uWFSAIfLEk2WFISuPXVipmfL534
@@ -26,3 +33,7 @@ app:
   kafka:
     topic:
       task-events: task-events
+  auth:
+    service:
+      name: taskhub-auth-service
+      url: http://localhost:8080

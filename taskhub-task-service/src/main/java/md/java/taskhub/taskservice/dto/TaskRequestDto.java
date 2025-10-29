@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import md.java.taskhub.taskservice.entity.TaskStatus;
+import md.java.taskhub.common.enums.TaskStatus;
 
 import java.time.LocalDate;
 import java.util.UUID;

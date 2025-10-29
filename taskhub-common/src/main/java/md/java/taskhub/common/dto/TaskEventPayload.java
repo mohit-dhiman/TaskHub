@@ -1,15 +1,16 @@
-package md.java.taskhub.taskservice.event;
+package md.java.taskhub.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import md.java.taskhub.taskservice.entity.TaskStatus;
+import md.java.taskhub.common.enums.TaskStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class TaskPayload {
+public class TaskEventPayload {
     private UUID taskId;
     private String title;
     private TaskStatus status;

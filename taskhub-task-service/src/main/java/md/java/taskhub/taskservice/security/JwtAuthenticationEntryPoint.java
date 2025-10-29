@@ -1,4 +1,4 @@
-package md.java.taskhub.authservice.security;
+package md.java.taskhub.taskservice.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

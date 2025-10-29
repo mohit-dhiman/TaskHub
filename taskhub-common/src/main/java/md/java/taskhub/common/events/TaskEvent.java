@@ -2,7 +2,7 @@ package md.java.taskhub.common.events;
 
 import lombok.Getter;
 import lombok.Setter;
-import md.java.taskhub.common.dto.TaskSummaryDto;
+import md.java.taskhub.common.dto.TaskEventPayload;
 import md.java.taskhub.common.enums.TaskEventType;
 
 import java.time.Instant;
@@ -15,5 +15,5 @@ public class TaskEvent {
     private TaskEventType eventType;
     private Instant eventTime;
 
-    private TaskSummaryDto payload;
+    private TaskEventPayload payload;
 }

@@ -90,6 +90,14 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- TaskHub dependencies -->
+        <dependency>
+            <groupId>md.java.taskhub</groupId>
+            <artifactId>taskhub-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- TaskHub dependencies -->
+
     </dependencies>
 
     <build>

@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -61,6 +62,13 @@ public class AuthService {
 
     public UserProfileDto getMyProfile() {
         User user = getCurrentUser();
+        return new UserProfileDto(user.getId(), user.getUsername(), user.getEmail());
+    }
+
+    public UserProfileDto getUser(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("User not found")
+        );
         return new UserProfileDto(user.getId(), user.getUsername(), user.getEmail());
     }
 

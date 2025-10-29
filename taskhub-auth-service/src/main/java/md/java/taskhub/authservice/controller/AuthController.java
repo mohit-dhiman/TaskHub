@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -34,6 +36,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UserProfileDto> getProfile() {
         UserProfileDto userProfileDto = authService.getMyProfile();
+        return ResponseEntity.ok(userProfileDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileDto> getUser(@PathVariable UUID id) {
+        UserProfileDto userProfileDto = authService.getUser(id);
         return ResponseEntity.ok(userProfileDto);
     }
 }
