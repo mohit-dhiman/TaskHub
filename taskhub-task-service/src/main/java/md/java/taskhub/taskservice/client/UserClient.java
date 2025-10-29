@@ -1,0 +1,15 @@
+package md.java.taskhub.taskservice.client;
+
+import md.java.taskhub.taskservice.dto.UserDto;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.UUID;
+
+@FeignClient(name = "${auth.service.name}", url = "${auth.service.url}")
+public interface UserClient {
+
+    @GetMapping("/api/v1/users/{id}")
+    UserDto getUserById(@PathVariable UUID id);
+}
