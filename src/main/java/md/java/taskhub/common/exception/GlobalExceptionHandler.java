@@ -18,61 +18,61 @@ public class GlobalExceptionHandler {
 
     // Validation Errors (@NotBlank, @Size, ...)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             fieldErrors.put(error.getField(), error.getDefaultMessage());
         }
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.BAD_REQUEST.value());
-        apiError.setError("Validation Failed");
-        apiError.setMessage(ex.getMessage());
-        apiError.setDetails(fieldErrors);
-        return ResponseEntity.badRequest().body(apiError);
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        apiErrorResponse.setError("Validation Failed");
+        apiErrorResponse.setMessage(ex.getMessage());
+        apiErrorResponse.setDetails(fieldErrors);
+        return ResponseEntity.badRequest().body(apiErrorResponse);
     }
 
     // Entity not found (Task, User, ... doesn't exist)
     @ExceptionHandler(value = EntityNotFoundException.class)
-    public ResponseEntity<ApiError> handleEntityNotFoundException(EntityNotFoundException ex) {
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.NOT_FOUND.value());
-        apiError.setError("Resource not found");
-        apiError.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        apiErrorResponse.setError("Resource not found");
+        apiErrorResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiErrorResponse);
     }
 
     // Security errors (forbidden)
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex) {
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.FORBIDDEN.value());
-        apiError.setError("Access Denied");
-        apiError.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
+    public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.FORBIDDEN.value());
+        apiErrorResponse.setError("Access Denied");
+        apiErrorResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiErrorResponse);
     }
 
     // Security errors (unauthorized)
     @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<ApiError> handleSecurityException(SecurityException ex) {
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.UNAUTHORIZED.value());
-        apiError.setError("Unauthorized");
-        apiError.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    public ResponseEntity<ApiErrorResponse> handleSecurityException(SecurityException ex) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        apiErrorResponse.setError("Unauthorized");
+        apiErrorResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiErrorResponse);
     }
 
     // Catch-all for unexpected errors
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGeneralException(Exception ex) {
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        apiError.setError("Internal Server Error");
-        apiError.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
+    public ResponseEntity<ApiErrorResponse> handleGeneralException(Exception ex) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiErrorResponse.setError("Internal Server Error");
+        apiErrorResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiErrorResponse);
     }
 }

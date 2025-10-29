@@ -62,6 +62,9 @@ public class TaskService {
         taskEvent.setPayload(toTaskPayload(saved));
         // Publish to Kafka
         taskEventProducer.sendTaskEvent(taskEvent);
+        // Publishing after save() is usually fine,
+        // but if you need strict DB-transactional atomicity (produce only if DB commit succeeds),
+        // use KafkaTransactionManager or Spring Kafka’s outbox pattern
 
         return toResponseDto(saved);
     }

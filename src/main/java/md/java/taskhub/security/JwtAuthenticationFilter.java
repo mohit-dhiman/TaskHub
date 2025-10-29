@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userRepository = userRepository;
     }
 
+    // If there's a JWT token in the Authorization header set the user details into the Security Context
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

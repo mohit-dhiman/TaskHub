@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JsonConfig {
 
+    // NOTE: Creating the ObjectMapper so that the Java 8 Time library get properly converted to Json
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

@@ -20,6 +20,9 @@ public class KafkaProducerConfig {
         this.kafkaProperties = kafkaProperties;
     }
 
+    // NOTE: Kafka does not use the spring provided ObjectMapper
+    // It creates its own instance of ObjectMapper
+    // To override that we write the ProductFactory
     @Bean
     public ProducerFactory<String, Object> producerFactory(ObjectMapper objectMapper) {
         JsonSerializer<Object> jsonSerializer = new JsonSerializer<>(objectMapper);

@@ -175,3 +175,13 @@ auth-service/
  │   └─ db/migration/
  └─ Dockerfile
 ```
+
+## TODO/Future Scope:
+
+__After Phase 1__
+- [ ] Break the Auth and Task into two separate services
+- [ ] Transactionality in DB operations (saving the task, updating the task, ...)
+- [ ] JWT auth security (what if someone steals the JWT token of a user)
+- [ ] Spring profiles (dev/test/prod)
+- [ ] Unit + Integration tests
+- [ ] Logging

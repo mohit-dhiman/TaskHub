@@ -1,11 +1,10 @@
 package md.java.taskhub.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import md.java.taskhub.common.exception.ApiError;
+import md.java.taskhub.common.exception.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -40,16 +39,16 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
 
-        ApiError apiError = new ApiError();
-        apiError.setTimestamp(LocalDateTime.now());
-        apiError.setStatus(HttpStatus.UNAUTHORIZED.value());
-        apiError.setError("Unauthorized");
-        apiError.setMessage(authException.getMessage());
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        apiErrorResponse.setTimestamp(LocalDateTime.now());
+        apiErrorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        apiErrorResponse.setError("Unauthorized");
+        apiErrorResponse.setMessage(authException.getMessage());
 
         response.setContentType("application/json");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        response.getWriter().write(objectMapper.writeValueAsString(apiError));
+        response.getWriter().write(objectMapper.writeValueAsString(apiErrorResponse));
         response.getWriter().flush();
     }
 }
