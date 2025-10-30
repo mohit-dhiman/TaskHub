@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
@@ -26,7 +27,7 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, Object> producerFactory(ObjectMapper objectMapper) {
         JsonSerializer<Object> jsonSerializer = new JsonSerializer<>(objectMapper);
-        jsonSerializer.setAddTypeInfo(false);
+        jsonSerializer.setAddTypeInfo(true);
         return  new DefaultKafkaProducerFactory<>(
                 kafkaProperties.buildProducerProperties(),
                 new StringSerializer(),

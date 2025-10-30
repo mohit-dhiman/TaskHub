@@ -188,3 +188,4 @@ auth-service/
 - [ ] Refactor auth-service and task-service to have a single point of JWT authentication
 - [ ] Inter service authentication
 - [ ] Common module POJOs refactoring
+- [ ] Header type in Kafka Producer. Needed?

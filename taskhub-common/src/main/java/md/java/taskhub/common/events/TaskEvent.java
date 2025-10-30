@@ -14,6 +14,7 @@ public class TaskEvent {
     private UUID eventId;
     private TaskEventType eventType;
     private Instant eventTime;
+    private String version = "1.0";
 
     private TaskEventPayload payload;
 }
