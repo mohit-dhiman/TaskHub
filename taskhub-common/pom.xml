@@ -12,7 +12,7 @@
     <artifactId>taskhub-common</artifactId>
     <version>1.0.0</version>
     <name>taskhub-common</name>
-    <description>taskhub-common</description>
+    <description>TaskHub - Common module</description>
     <url/>
     <licenses>
         <license/>

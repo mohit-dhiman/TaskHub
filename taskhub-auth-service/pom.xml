@@ -12,7 +12,7 @@
     <artifactId>taskhub-auth-service</artifactId>
     <version>1.0.0</version>
     <name>taskhub-auth-service</name>
-    <description>taskhub-auth-service</description>
+    <description>TaskHub - Auth Service module</description>
     <url/>
     <licenses>
         <license/>

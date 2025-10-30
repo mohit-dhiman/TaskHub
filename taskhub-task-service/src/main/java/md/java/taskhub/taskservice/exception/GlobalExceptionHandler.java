@@ -1,6 +1,7 @@
-package md.java.taskhub.common.exception;
+package md.java.taskhub.taskservice.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import md.java.taskhub.common.dto.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiErrorResponse);
     }
 
-    // Entity not found (Task, User, ... doesn't exist)
+    // Entity not found (Task ... doesn't exist)
     @ExceptionHandler(value = EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
@@ -76,3 +77,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiErrorResponse);
     }
 }
+

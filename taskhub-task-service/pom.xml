@@ -12,7 +12,7 @@
     <artifactId>taskhub-task-service</artifactId>
     <version>1.0.0</version>
     <name>taskhub-task-service</name>
-    <description>taskhub-task-service</description>
+    <description>TaskHub - Task Service module</description>
     <url/>
     <licenses>
         <license/>
@@ -28,13 +28,14 @@
     </scm>
     <properties>
         <java.version>24</java.version>
+        <spring.cloud.version>2025.0.0</spring.cloud.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2025.0.0</version>
+                <version>${spring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
