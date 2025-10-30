@@ -178,10 +178,13 @@ auth-service/
 
 ## TODO/Future Scope:
 
-__After Phase 1__
-- [ ] Break the Auth and Task into two separate services
+- [x] Break the Auth and Task into two separate services
 - [ ] Transactionality in DB operations (saving the task, updating the task, ...)
 - [ ] JWT auth security (what if someone steals the JWT token of a user)
+- [ ] RSA based JWT authentication
 - [ ] Spring profiles (dev/test/prod)
 - [ ] Unit + Integration tests
 - [ ] Logging
+- [ ] Refactor auth-service and task-service to have a single point of JWT authentication
+- [ ] Inter service authentication
+- [ ] Common module POJOs refactoring

@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: taskhub-auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskhub
+    username: thuser
+    password: thuser
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+
+logging:
+  level:
+    root: info
+
+app:
+  jwt:
+    secret: R2POV7LI8i1c3KG9uWFSAIfLEk2WFISuPXVipmfL534
+    expiration-ms: 86400000
+  kafka:
+    topic:
+      task-events: task-events
+  auth:
+    service:
+      name: taskhub-auth-service
+      url: http://localhost:8080
