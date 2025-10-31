@@ -2,6 +2,7 @@ package md.java.taskhub.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import md.java.taskhub.common.enums.TaskStatus;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@ToString
 public class TaskEventPayload {
     private UUID taskId;
     private String title;

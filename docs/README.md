@@ -176,9 +176,14 @@ auth-service/
  └─ Dockerfile
 ```
 
+## Resource:
+
+- [Spring Kafka Serialization, Deserialization, and Message Conversion](https://docs.spring.io/spring-kafka/reference/kafka/serdes.html)
+
 ## TODO/Future Scope:
 
 - [x] Break the Auth and Task into two separate services
+- [x] Header type in Kafka Producer.
 - [ ] Transactionality in DB operations (saving the task, updating the task, ...)
 - [ ] JWT auth security (what if someone steals the JWT token of a user)
 - [ ] RSA based JWT authentication
@@ -188,4 +193,3 @@ auth-service/
 - [ ] Refactor auth-service and task-service to have a single point of JWT authentication
 - [ ] Inter service authentication
 - [ ] Common module POJOs refactoring
-- [ ] Header type in Kafka Producer. Needed?

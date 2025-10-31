@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
     public void handleEvent(TaskEvent taskEvent) {
-        System.out.println("Received task event: " + taskEvent.getEventId());
+        System.out.println("Received task event: " + taskEvent);
     }
 }

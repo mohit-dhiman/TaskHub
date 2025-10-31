@@ -1,22 +1,18 @@
 package md.java.taskhub.notification.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import md.java.taskhub.common.events.TaskEvent;
 import md.java.taskhub.notification.service.NotificationService;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskEventListener {
 
     private final NotificationService notificationService;
-    private final ObjectMapper objectMapper;
 
     public TaskEventListener(NotificationService notificationService, ObjectMapper objectMapper) {
         this.notificationService = notificationService;
-        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(
