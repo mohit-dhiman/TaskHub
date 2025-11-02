@@ -38,6 +38,12 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable UUID id) {
+        TaskResponseDto task = taskService.readTask(id);
+        return ResponseEntity.ok(task);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@PathVariable UUID id,
                                                       @Validated @RequestBody TaskRequestDto request) {

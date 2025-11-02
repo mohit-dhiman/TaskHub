@@ -8,11 +8,11 @@
         <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>md.java</groupId>
+    <groupId>md.java.taskhub</groupId>
     <artifactId>taskhub</artifactId>
     <version>1.0.0</version>
-    <name>TaskHub</name>
-    <description>TaskHub</description>
+    <name>taskHub</name>
+    <description>TaskHub - Task Management</description>
     <url/>
     <licenses>
         <license/>
@@ -34,6 +34,7 @@
     <modules>
         <module>taskhub-auth-service</module>
         <module>taskhub-common</module>
+        <module>taskhub-notification-service</module>
         <module>taskhub-task-service</module>
     </modules>
 

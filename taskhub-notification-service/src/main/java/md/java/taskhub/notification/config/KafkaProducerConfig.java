@@ -1,5 +1,4 @@
-package md.java.taskhub.taskservice.config;
-
+package md.java.taskhub.notification.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -14,9 +13,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @Configuration
 public class KafkaProducerConfig {
 
-    // NOTE: Kafka does not use the spring provided ObjectMapper
-    // It creates its own instance of ObjectMapper
-    // To override that we write the ProductFactory
+    // NOTE: Need the producer here to publish on .DLT topic
     @Bean
     public ProducerFactory<String, Object> producerFactory(KafkaProperties kafkaProperties,
                                                            ObjectMapper objectMapper) {

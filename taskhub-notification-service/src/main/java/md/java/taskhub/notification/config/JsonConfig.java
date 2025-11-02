@@ -1,4 +1,4 @@
-package md.java.taskhub.taskservice.config;
+package md.java.taskhub.notification.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import md.java.taskhub.common.utils.JsonUtil;
