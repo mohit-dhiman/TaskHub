@@ -1,31 +1,73 @@
 services:
-  kafka:
+  kafka-1:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
+    container_name: kafka-1
     ports:
       - "9092:9092"
     environment:
       # --- KRaft mode settings ---
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: CONTROLLER://:19092,INTERNAL://:29092,EXTERNAL://:9092 # List of listeners Kafka binds to
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT # Key/Value pair for protocol to use for each listener
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:19092,2@kafka-2:19092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
       # --- Broker configuration ---
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:29092, EXTERNAL://localhost:9092 # List of listeners passed back to clients as metadata
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL # Listener for brokers to communicate within themselves
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3 # Total number of partitions in this cluster (regardless of the # of brokers)
+      KAFKA_LOG_RETENTION_HOURS: 168
+
+      # --- Metadata (KRaft) ---
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk   # static cluster ID (any unique base64 string)
+    volumes:
+      - kafka1_data:/var/lib/kafka/data
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-2
+    ports:
+      - "9093:9093"
+    environment:
+      # --- KRaft mode settings ---
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 2
+      KAFKA_LISTENERS: CONTROLLER://:19092,INTERNAL://:29092,EXTERNAL://:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:19092,2@kafka-2:19092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # --- Broker configuration ---
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:29092, EXTERNAL://localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_LOG_RETENTION_HOURS: 168
 
       # --- Metadata (KRaft) ---
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk   # static cluster ID (any unique base64 string)
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
     volumes:
-      - kafka_data:/var/lib/kafka/data
+      - kafka2_data:/var/lib/kafka/data
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka-1:29092 # Address of any one of the Controller nodes
+    depends_on:
+      - kafka-1
+      - kafka-2
 
   redis:
     image: redis:7
@@ -36,5 +78,6 @@ services:
       - redis_data:/data
 
 volumes:
-  kafka_data:
+  kafka1_data:
+  kafka2_data:
   redis_data:

@@ -15,7 +15,7 @@ public class ConsumerTypeResolver {
     private static JavaType taskEventType = TypeFactory.defaultInstance().constructType(TaskEvent.class);
     private static JavaType defaultType = TypeFactory.defaultInstance().constructType(Object.class);
 
-    @Value("${app.kafka.topic.task-events}")
+    @Value("${app.kafka.topic.task-events.name}")
     public void setTaskEventTopicName(String name) {
         taskEventTopic = name;
     }

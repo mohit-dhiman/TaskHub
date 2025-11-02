@@ -41,6 +41,7 @@ direction TB
     UUID eventId
     EventType eventType [TASK_CREATED, TASK_ASSIGNED, TASK_UPDATED, TASK_DELETED]
     Instant eventTime
+    String version = "1.0"
 
     TaskPayload payload
   }
@@ -64,6 +65,9 @@ direction TB
     - task-events.DLT — dead-letter topic for failed events
 - Setup key value serializer
 
+## Kafka Producer Flow
+![Kafka Producer Flow](KafkaProducerFlow.svg)
+
 ## Principles for Event Publishing:
 
 - Keep producer synchronous for DB save, but fire-and-forget publish after commit (or better: publish in tansactionally-aware way).
@@ -72,7 +76,3 @@ direction TB
 - Use structured event schema (JSON) with an eventId and occurredAt.
 - Transactional considerations
     - Publishing after save() is usually fine, but if you need strict DB-transactional atomicity (produce only if DB commit succeeds), use KafkaTransactionManager or Spring Kafka’s outbox pattern.
-
-
-Stuff
-- Register both Auth and Task services in a service registry (Eureka or Consul).

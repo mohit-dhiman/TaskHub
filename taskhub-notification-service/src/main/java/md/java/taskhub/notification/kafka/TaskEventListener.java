@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import md.java.taskhub.common.events.TaskEvent;
 import md.java.taskhub.notification.service.NotificationService;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +19,7 @@ public class TaskEventListener {
     }
 
     @KafkaListener(
-            topics = "${app.kafka.topic.task-events}",
+            topics = "${app.kafka.topic.task-events.name}",
             groupId = "${app.kafka.group.notification}",
             containerFactory = "taskEventKafkaListenerFactory"
     )
@@ -29,6 +32,10 @@ public class TaskEventListener {
 //            System.out.println(ex.getMessage());
 //        }
 //        System.out.println(taskEvent);
+        System.out.println("Received task event: " + event);
+        if (event.getPayload().getTitle().equals("FAIL")) {
+            throw new RuntimeException("FAIL on Purpose");
+        }
         notificationService.handleEvent(event);
     }
 }

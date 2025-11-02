@@ -13,7 +13,7 @@ public class TaskEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${app.kafka.topic.task-events}")
+    @Value("${app.kafka.topic.task-events.name}")
     private String topicName;
 
     public TaskEventProducer(KafkaTemplate<String, Object> kafkaTemplate) {

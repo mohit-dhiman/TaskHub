@@ -37,10 +37,7 @@ public class TaskService {
 
     public TaskResponseDto createTask(TaskRequestDto request) {
         UserDto owner = getCurrentUser();
-        UserDto asignee = null;
-        if (request.getAssignedTo() != null) {
-            asignee = userClient.getUserById(request.getAssignedTo());
-        }
+        UserDto assignee = getUser(request.getAssignedTo());
         // Create the Task
         Task task = new Task();
         task.setTitle(request.getTitle());
@@ -51,45 +48,20 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
         task.setCreatedBy(owner.getId());
         task.setStatus(request.getStatus());
-        // Save to Database
+        
         Task saved = taskRepository.save(task);
-
-        // Create TaskEvent
-        TaskEvent taskEvent = new TaskEvent();
-        taskEvent.setEventId(UUID.randomUUID());
-        taskEvent.setEventType(TaskEventType.TASK_CREATED);
-        taskEvent.setEventTime(Instant.now());
-        taskEvent.setPayload(toTaskPayload(saved, owner, asignee));
-        // Publish to Kafka
-        taskEventProducer.sendTaskEvent(taskEvent);
-        // Publishing after save() is usually fine,
-        // but if you need strict DB-transactional atomicity (produce only if DB commit succeeds),
-        // use KafkaTransactionManager or Spring Kafka’s outbox pattern
-
-        return toResponseDto(saved, owner, asignee);
+        publishEvent(TaskEventType.TASK_CREATED, toTaskPayload(saved, owner, assignee));
+        if (assignee != null) {
+            publishEvent(TaskEventType.TASK_ASSIGNED, toTaskPayload(saved, owner, assignee));
+        }
+        return toResponseDto(saved, owner, assignee);
     }
 
-    public List<TaskResponseDto> getMyCreatedTasks() {
-        List<TaskResponseDto> tasks = new ArrayList<>();
-        UserDto owner = getCurrentUser();
-        for(Task task: taskRepository.findByCreatedBy(owner.getId())) {
-            UserDto asignee = null;
-            if (task.getAssignedTo() != null) {
-                asignee = userClient.getUserById(task.getAssignedTo());
-            }
-            tasks.add(toResponseDto(task, owner, asignee));
-        }
-        return tasks;
-    }
-
-    public List<TaskResponseDto> getMyAssignedTasks() {
-        List<TaskResponseDto> tasks = new ArrayList<>();
-        UserDto asignee = getCurrentUser();
-        for (Task task : taskRepository.findByAssignedTo(asignee.getId())) {
-            UserDto owner = userClient.getUserById(task.getCreatedBy());
-            tasks.add(toResponseDto(task, owner, asignee));
-        }
-        return tasks;
+    public TaskResponseDto readTask(UUID taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(
+                () -> new EntityNotFoundException("Task with id: " + taskId + " not found")
+        );
+        return toResponseDto(task, getUser(task.getCreatedBy()), getUser(task.getAssignedTo()));
     }
 
     public TaskResponseDto updateTask(UUID taskId, TaskRequestDto request) {
@@ -102,14 +74,16 @@ public class TaskService {
                 (task.getAssignedTo() == null || !task.getAssignedTo().equals(currentUser.getId()))) {
             throw new AccessDeniedException("You are not authorized to update this task");
         }
-        // TODO: Logic can be leaner
         UserDto owner = null;
-        if (request.getAssignedTo() != null) {
-            owner = userClient.getUserById(request.getAssignedTo());
-        }
-        UserDto asignee = null;
-        if (request.getAssignedTo() != null) {
-            asignee = userClient.getUserById(request.getAssignedTo());
+        UserDto currentAssignee = null;
+        if (currentUser.getId().equals(task.getCreatedBy())) {
+            // Owner is updating the task
+            owner = currentUser;
+            currentAssignee = getUser(task.getAssignedTo());
+        } else {
+            // Assignee is updating the task
+            currentAssignee = currentUser;
+            owner = getUser(task.getCreatedBy());
         }
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
@@ -117,7 +91,20 @@ public class TaskService {
         task.setAssignedTo(request.getAssignedTo());
         task.setStatus(request.getStatus());
         task.setUpdatedAt(LocalDateTime.now());
-        return toResponseDto(taskRepository.save(task), owner, asignee);
+        Task saved = taskRepository.save(task);
+        UserDto updatedAssignee = null;
+        if (saved.getAssignedTo() != null) {
+            if (currentAssignee != null && currentAssignee.getId().equals(saved.getAssignedTo())) {
+                updatedAssignee = currentAssignee;
+            } else {
+                updatedAssignee = getUser(saved.getAssignedTo());
+            }
+        }
+        publishEvent(TaskEventType.TASK_UPDATED, toTaskPayload(saved, owner, updatedAssignee));
+        if (updatedAssignee != null && updatedAssignee != currentAssignee) {
+            publishEvent(TaskEventType.TASK_ASSIGNED, toTaskPayload(saved, owner, updatedAssignee));
+        }
+        return toResponseDto(saved, owner, updatedAssignee);
     }
 
     public void deleteTask(UUID taskId) {
@@ -129,10 +116,49 @@ public class TaskService {
         if (!task.getCreatedBy().equals(currentUser.getId())) {
             throw new AccessDeniedException("Only the creator can delete this task");
         }
+        UserDto assignee = getUser(task.getAssignedTo());
         taskRepository.delete(task);
+        publishEvent(TaskEventType.TASK_DELETED, toTaskPayload(task, currentUser, assignee));
+    }
+
+    public List<TaskResponseDto> getMyCreatedTasks() {
+        List<TaskResponseDto> tasks = new ArrayList<>();
+        UserDto owner = getCurrentUser();
+        for(Task task: taskRepository.findByCreatedBy(owner.getId())) {
+            UserDto assignee = getUser(task.getAssignedTo());
+            tasks.add(toResponseDto(task, owner, assignee));
+        }
+        return tasks;
+    }
+
+    public List<TaskResponseDto> getMyAssignedTasks() {
+        List<TaskResponseDto> tasks = new ArrayList<>();
+        UserDto assignee = getCurrentUser();
+        for (Task task : taskRepository.findByAssignedTo(assignee.getId())) {
+            UserDto owner = getUser(task.getCreatedBy());
+            tasks.add(toResponseDto(task, owner, assignee));
+        }
+        return tasks;
+    }
+
+    private void publishEvent(TaskEventType type, TaskEventPayload payload) {
+        // Create TaskEvent
+        TaskEvent taskEvent = new TaskEvent();
+        taskEvent.setEventId(UUID.randomUUID());
+        taskEvent.setEventType(type);
+        taskEvent.setEventTime(Instant.now());
+        taskEvent.setPayload(payload);
+        // Publish to Kafka
+        taskEventProducer.sendTaskEvent(taskEvent);
+        // Publishing after save() is usually fine,
+        // but if you need strict DB-transactional atomicity (produce only if DB commit succeeds),
+        // use KafkaTransactionManager or Spring Kafka’s outbox pattern
     }
 
     private UserDto getUser(UUID id) {
+        if (id == null) {
+            return null;
+        }
         return userClient.getUserById(id);
     }
 
@@ -174,4 +200,5 @@ public class TaskService {
         UserDto principalUser = (UserDto) authentication.getPrincipal();
         return principalUser;
     }
+
 }

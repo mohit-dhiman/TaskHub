@@ -32,7 +32,10 @@ app:
     expiration-ms: 86400000
   kafka:
     topic:
-      task-events: task-events
+      task-events:
+        name: task-events
+        partitions: 3
+        replicas: 1
   auth:
     service:
       name: taskhub-auth-service
